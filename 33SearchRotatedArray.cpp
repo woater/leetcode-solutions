@@ -13,7 +13,25 @@ using namespace std;
 // Code:
 class Solution {
 public:
+    int binarySearch(vector<int>& nums, size_t begin, size_t end, int target) {
+        //cout << begin << ":" << end << endl;
+        if (begin == end)
+            return nums[begin] == target ? begin : -1;
+        size_t mid = (begin + end) / 2;
+        //cout << mid << endl;
+        if (nums[mid] > target) {
+            return binarySearch(nums, begin, mid, target);
+        }
+        else if (nums[mid] < target) {
+            return binarySearch(nums, mid+1, end, target);
+        }
+        else {
+            return mid;
+        }
+        return -1; // default return value
+    }
     int binarySearchWithRotate(vector<int>& nums, size_t begin, size_t end, int target) {
+        //cout << begin << ":" << end << endl;
         if (begin == end) {
             if (nums[begin] == target)
                 return begin;
@@ -25,44 +43,40 @@ public:
         if (nums[mid] == target)    // find
             return mid;
 
-        if (mid > 0 && mid < (nums.size()-1)) { // mid isn't begin or end point
+        if (mid > begin && mid < end) { // mid isn't begin or end point
             if (nums[mid] > nums[mid-1]) { // mid isn't the min value
-                if (nums[mid] < nums[mid+1]) {// mid+1 isn't the min value
-                    if (nums[mid] > target) {
-                        return binarySearchWithRotate(nums, begin, mid, target);
-                    }
-                    else if (nums[mid < target]) {
-                        return binarySearchWithRotate(nums, mid+1, end, target);
-                    }
+                if (nums[mid] < nums[mid+1]) { // not find mid value
+                    int lv = binarySearchWithRotate(nums, begin, mid, target);
+                    int rv = binarySearchWithRotate(nums, mid+1, end, target);
+                    return lv > rv ? lv : rv;
                 }
                 else {  // mid+1 is the min value
+                    //cout << "find mid+1" << mid + 1 << endl;
                     if (nums[0] > target) {
-                        return binarySearchWithRotate(nums, mid+1, end, target);
+                        return binarySearch(nums, mid+1, end, target);
                     }
                     else {
-                        return binarySearchWithRotate(nums, begin, mid, target);
+                        return binarySearch(nums, begin, mid, target);
                     }
                 }
             }
             else { // mid is the min value
+                    //cout << "find mid" << mid << endl;
                     if (nums[0] > target) {
-                        return binarySearchWithRotate(nums, mid, end, target);
+                        return binarySearch(nums, mid, end, target);
                     }
                     else {
-                        return binarySearchWithRotate(nums, begin, mid-1, target);
+                        return binarySearch(nums, begin, mid-1, target);
                     }
             }
         }
-        else { // mid is begin or end point and mid is not position
-            if (nums[mid] < target && mid == begin) {
-                if (nums[mid+1] == target)
-                    return mid+1;
-            }
-            else if (nums[mid] > target && mid == end) {
-                if (nums[mid-1] == target)
-                    return mid-1;
-            }
-            return -1;
+        else { // mid is begin or end point and mid is not positioned
+            if (nums[begin] == target)
+                return begin;
+            else if (nums[end] == target)
+                return end;
+            else
+                return -1;
         }
         return -1;
     }
