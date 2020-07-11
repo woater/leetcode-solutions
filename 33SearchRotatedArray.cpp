@@ -64,9 +64,12 @@ public:
             }
             return -1;
         }
+        return -1;
     }
 
     int search(vector<int>& nums, int target) {
+        if (nums.size() == 0)
+            return -1;
         if (nums.size() < 3) {
             if (nums[0] == target)
                 return 0;
