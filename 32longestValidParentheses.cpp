@@ -3,7 +3,8 @@
 //链接：https://leetcode-cn.com/problems/longest-valid-parentheses
 #include <string>
 #include <vector>
-
+#include <iostream>
+#include <cstring>
 //Solution:
 //  Base solution: Do parentheses matching starting at each position
 //                  then count the maximum anser.
@@ -24,15 +25,36 @@ public:
         }
         int maxLength = 0;
         //Iteration
-        for (int l = 0; l < s.size(); l+=2) {    //set step to 2,cause valid length is odd
-            for (int i = 0; i < s.size() - l - 1; i++) {
+        for (int l = 1; l < s.size(); l+=2) {    //set step to 2,cause valid length is odd
+        cout << "l: " << l << endl; 
+            for (int i = 0; i < s.size() - l; i++) {
                 int j = i + l;
-                if ((s[i] == '(' && s[j] == ')' && (l==1 || (l > 1 && dp[i+1][j-1] == 1))) || (dp[i][i+l/2] == 1 && dp[i+l/2+1][j]==1)) {
+                //  (dp[i][i+l/2] == 1 && dp[i+l/2+1][j]==1) can't conclude all situation, cause connect point may not be at middle
+                if (s[i] == '(' && s[j] == ')' && (l==1 || (l > 1 && dp[i+1][j-1] == 1))) {
                     dp[i][j] = 1;
-                    maxLength = l;
+                    maxLength = l+1;
+                }
+                else {  // iterate over all possible connection
+                    for (int subL = 1; subL < l; subL+=2) {
+                        if (dp[i][subL] == 1 && dp[subL+1][j] == 1) {
+                            dp[i][j] = 1;
+                            maxLength = l+1;
+                            break;
+                        }
+                    }
                 }
             }
+        cout << "maxlength: " << maxLength << endl;
         }
         return maxLength;
     }
 };
+
+int main()
+{
+    //string s = "()()()()";
+    //string s = "((()))";
+    string s = "()(())((";
+    cout << Solution().longestValidParentheses(s);
+    return 0;
+}
